@@ -14,11 +14,14 @@ import com.joyotime.net.monitor.exchange.dao.base.BaseBufferPush;
 import com.joyotime.net.monitor.exchange.dao.model.LogInfo;
 import com.joyotime.net.monitor.exchange.utils.DateUtils;
 
+import lombok.extern.slf4j.Slf4j;
+
 /**
  * logInfo日志信息buffer
  * @author nbin
  * @version $Id: LogInfoBuffer.java, v 0.1 2019年1月24日 下午7:08:41 nbin Exp $
  */
+@Slf4j
 @Component
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class LogInfoBuffer extends BaseBufferPush {
@@ -43,25 +46,17 @@ public class LogInfoBuffer extends BaseBufferPush {
         setPrefix(sb.toString());//前缀
         setBufferSize(100);//缓冲条数  后面可以做成配置
     }
-    
     /** 
-     * @see com.joyotime.net.monitor.exchange.dao.base.BaseBufferPush#appendBody(com.joyotime.net.monitor.exchange.dao.base.BaseModel)
+     * @see com.joyotime.net.monitor.exchange.dao.base.BaseBufferPush#appendSql(java.lang.Object)
      */
     @Override
-    public String appendBody(String msg) {
-        if (null == msg) {
-            return null;
-        }
-        
-        return  null;
-    }
-    
-    private String valuesBodyFromLogInfo(LogInfo obj) {
-        if (obj == null) {
-            return null;
+    public boolean appendSql(Object msg) {
+        boolean append = false;
+        if(null == msg || !(msg instanceof LogInfo)){
+            return append;
         }
         StringBuffer sb = new StringBuffer();
-        sb.append("(");
+        LogInfo obj = (LogInfo)msg;
         sb.append("(");
         //create_time
         sb.append("'").append(DateUtils.formatDate(new Date(), DateUtils.DATE_FORMAT_YYYY_MM_DD_HH_MM_SS)).append("',");
@@ -86,7 +81,24 @@ public class LogInfoBuffer extends BaseBufferPush {
         //upload_fail_obj
         sb.append("'").append(obj.getUploadFailMsg()).append("'");
         sb.append(")");
-        return sb.toString();
+        //
+        boolean sd = exeData(sb.toString());
+        if (sd) {
+            append = true;
+            log.info("LogInfo数据写入缓冲成功！");
+        } else {
+            append = false;
+            log.error("LogInfo数据写入缓冲失败！");
+        }
+        return append;
+    }
+    
+    /** 
+     * @see com.joyotime.net.monitor.exchange.dao.base.BaseBufferPush#appendBody(com.joyotime.net.monitor.exchange.dao.base.BaseModel)
+     */
+    @Override
+    public String appendBody(String msg) {
+        return  null;
     }
 
 }

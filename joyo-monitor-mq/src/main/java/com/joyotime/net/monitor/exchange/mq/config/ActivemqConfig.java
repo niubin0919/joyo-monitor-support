@@ -23,10 +23,10 @@ public class ActivemqConfig extends BaseConfig {
     static {
         try {
             pro = new Properties();
-            InputStream fs = ActivemqConfig.class.getClassLoader().getResourceAsStream("conf/mq-config.properties");
+            InputStream fs = ActivemqConfig.class.getClassLoader().getResourceAsStream("mq-config.properties");
             pro.load(fs);
         } catch (IOException e) {
-            log.info("loading....sdk-config.properties error...!", e);
+            log.info("loading....mq-config.properties error...!", e);
         }
     }
 
@@ -38,7 +38,6 @@ public class ActivemqConfig extends BaseConfig {
     public static String getClientID() {
         return pro.getProperty("activemq.ClientID");
     }
-
     /**
      * 获取MQ连接地址
      * 
@@ -47,25 +46,6 @@ public class ActivemqConfig extends BaseConfig {
     public static String getMqURI() {
         return pro.getProperty("activemq.URI");
     }
-
-    /**
-     * 获取MQ队列用户名
-     * 
-     * @return
-     */
-    public static String getUid() {
-        return pro.getProperty("activemq.Uid");
-    }
-
-    /**
-     * 获取MQ队列密码
-     * 
-     * @return
-     */
-    public static String getPwd() {
-        return pro.getProperty("activemq.Pwd");
-    }
-
     /**
      * 获取本地错误数据缓存大小
      * 
@@ -75,4 +55,21 @@ public class ActivemqConfig extends BaseConfig {
         int size = getSetInt(pro, "activemq.LocalBuffSize");
         return size == -1 ? 5000 : size;
     }
+    /**
+     * 获取MQ队列用户名
+     * 
+     * @return
+     */
+    public static String getUid() {
+        return pro.getProperty("activemq.Uid");
+    }
+    /**
+     * 获取MQ队列密码
+     * 
+     * @return
+     */
+    public static String getPwd() {
+        return pro.getProperty("activemq.Pwd");
+    }
+
 }

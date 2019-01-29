@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:mvc="http://www.springframework.org/schema/mvc" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+	xmlns:task="http://www.springframework.org/schema/task"
+	xmlns:jms="http://www.springframework.org/schema/jms" 
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.2.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.2.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.2.xsd
+		http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-4.2.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.2.xsd
+		http://www.springframework.org/schema/jms http://www.springframework.org/schema/jms/spring-jms-4.2.xsd">
+	
+	<bean id="jmsTemplate" class="org.springframework.jms.core.JmsTemplate">  
+        <property name="connectionFactory" ref="connectionFactory"/>  
+    </bean> 
+	
+	<!-- ConnectionFactory -->
+	<bean id="targetConnectionFactory" class="org.apache.activemq.ActiveMQConnectionFactory">  
+	    <property name="brokerURL" value="${activemq.url}"/>
+	    <property name="maxThreadPoolSize" value="${activemq.pool.maxThreadPoolSize}" />  
+	     <!--  
+	    <property name="userName" value="${activemq.userName}"></property>
+        <property name="password" value="${activemq.password}"></property>    
+        -->
+	</bean>  
+	<bean id="pooledConnectionFactory" class="org.apache.activemq.pool.PooledConnectionFactory">  
+	    <property name="connectionFactory" ref="targetConnectionFactory"/>  
+	    <property name="maxConnections" value="${activemq.pool.maxConnections}"/>
+	</bean>  
+	<!-- jms connection factory -->
+	<bean id="connectionFactory" class="org.springframework.jms.connection.SingleConnectionFactory">  
+	    <property name="targetConnectionFactory" ref="pooledConnectionFactory"/>  
+	    <!-- 重试  -->
+	    <property name="reconnectOnException" value="true"/>
+	</bean>  
+	
+	<!-- 队列地址 -->
+	<bean id="destination" class="org.apache.activemq.command.ActiveMQQueue">
+		<constructor-arg index="0" value="${activemq.listener.queueName}" />
+	</bean>
+	
+    <!-- 消费者 -->
+	<bean id="messageListenerAdapter" class="org.springframework.jms.listener.adapter.MessageListenerAdapter">
+		<property name="delegate">
+			<bean class="com.game.platform.core.listener.ConsumerMessageListener"/>
+		</property>
+	</bean> 
+	<!-- 消息监听适配器对应的监听容器 -->
+	<bean id="messageListenerAdapterContainer" class="org.springframework.jms.listener.DefaultMessageListenerContainer">
+		<property name="destination" ref="destination"/>
+		<property name="connectionFactory" ref="connectionFactory"/>
+		<property name="messageListener" ref="messageListenerAdapter"/>
+		<!-- 缓冲连接 -->
+		<property name="cacheLevel" value="1"/> 
+		<!-- 最大轮询 --> 
+		<property name="maxMessagesPerTask" value="${activemq.maxMessagesPerTask}" />
+		<!-- 动态调度监听线程(递增/递减) -->
+		<property name="concurrency" value="${activemq.concurrency}"></property>
+		<!-- timeout -->
+		<property name="receiveTimeout" value="6000"/>  
+	</bean>
+</beans>

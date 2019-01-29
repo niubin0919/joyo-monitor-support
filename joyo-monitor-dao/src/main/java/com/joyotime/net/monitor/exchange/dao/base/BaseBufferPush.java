@@ -38,7 +38,12 @@ public abstract class BaseBufferPush {
     /** 消费队列临时队列*/
     public static final String QueueTempKeyName = "buffer_consumerQueueTemp";
     
-    /** 获得缓冲内容  */
+    /**
+     * 多个缓冲内容批次执行
+     * 
+     * @param ms
+     * @return
+     */
     public boolean valuesBody(String ms){
         return insertRedisBuffer(this.appendBody(ms));
     }
@@ -48,6 +53,13 @@ public abstract class BaseBufferPush {
      * @return
      */
     public abstract String appendBody(String msg);
+    
+    /**
+     * 对象方式，主要针对loginfo
+     * @param msg
+     * @return
+     */
+    public abstract boolean appendSql(Object obj);
     
     /**
      * insert

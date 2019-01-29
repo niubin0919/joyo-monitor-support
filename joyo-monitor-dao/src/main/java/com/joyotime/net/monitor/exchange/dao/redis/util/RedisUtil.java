@@ -185,6 +185,27 @@ public class RedisUtil {
         }
         return s;
     }
+    
+    /**
+     * hset
+     * @param key
+     * @param fieid
+     * @param value
+     * @param index
+     * @return 状态码 1成功，0失败，fieid已存在将更新，也返回0
+     */
+    public static long hset(String key, String fieid, String value, int index) {
+        Jedis jedis = null;
+        long s;
+        try {
+            jedis = getJedis();
+            jedis.select(index);
+            s = jedis.hset(key, fieid, value);
+        } finally {
+            RedisUtil.returnJedis(jedis);
+        }
+        return s;
+    }
     /**
      * 获取
      * @param key

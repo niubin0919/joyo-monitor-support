@@ -20,7 +20,7 @@ import lombok.extern.slf4j.Slf4j;
 import redis.clients.jedis.Jedis;
 
 /**
- * 
+ * redis buffer 
  * @author nbin
  * @version $Id: RedisServerTask.java, v 0.1 2019年1月24日 下午5:25:42 nbin Exp $
  */

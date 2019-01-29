@@ -12,6 +12,17 @@
 		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.2.xsd"
 	default-lazy-init="true">
 	
+	<context:component-scan base-package="com.joyotime.net.monitor.exchange.*" />
+	
+	<bean id="propertyConfigurer_local" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="locations">
+			<list>
+				<value>classpath*:jdbc.properties</value>
+			</list>
+		</property>
+		<property name="fileEncoding" value="utf-8" />
+	</bean>
+	
 	<bean id="statFilter" class="com.alibaba.druid.filter.stat.StatFilter" lazy-init="true">
         <property name="logSlowSql" value="true"/>
         <property name="mergeSql" value="true"/>

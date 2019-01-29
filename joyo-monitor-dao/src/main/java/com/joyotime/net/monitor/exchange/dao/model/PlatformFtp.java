@@ -17,7 +17,7 @@ import lombok.ToString;
  * 平台ftp服务器配置
  * </p>
  *
- * @author nbin123
+ * @author nbin
  * @since 2019-01-28
  */
 @Getter
@@ -44,22 +44,22 @@ public class PlatformFtp extends Model<PlatformFtp> {
     @TableField("platform_id")
     private Integer platformId;
     /**
-     * 关联编号
+     * ip
      */
     @TableField("platform_ftp_host")
     private String platformFtpHost;
     /**
-     * 名称
+     * 端口
      */
     @TableField("platform_ftp_port")
     private String platformFtpPort;
     /**
-     * 注释
+     * 用户
      */
     @TableField("platform_ftp_user")
     private String platformFtpUser;
     /**
-     * 类名
+     * 密码
      */
     @TableField("platform_ftp_password")
     private String platformFtpPassword;

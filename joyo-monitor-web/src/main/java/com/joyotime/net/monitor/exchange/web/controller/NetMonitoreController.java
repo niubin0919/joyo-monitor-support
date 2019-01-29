@@ -110,7 +110,7 @@ public class NetMonitoreController {
         String distFileName = dir + sn + "_" + System.currentTimeMillis() + "_" + UUID.randomUUID().toString().replaceAll("-", "") + "_" + sourceFileName;
         
         /*
-         * 缓冲文件，这个地方最好还是需要异步处理，
+         * 缓冲文件，这个地方最好还是需要异步处理
          * 不用之前的每个请求都用单独的线程处理，而使用每个平台单独一个不阻塞线程，并加入线程池。
          * 不需要保留文件，保留文件不方便查看，如果这样的话没有mq缓冲会丢失数据，
          * 暂时考虑到的办法是把上传信息直接对应每个平台发送到mq队列缓冲，在由消费端处理相应平台的数据缓冲和业务处理
@@ -119,7 +119,10 @@ public class NetMonitoreController {
         String data = "";
         BufferedReader reader = null;
         try {
-            //4 读取文件内容
+            /*
+             * 4 读取文件内容 
+             * TODO文件的格式和内容的格式还不是很清楚
+             */
             file.transferTo(new File(distFileName));
             reader = new BufferedReader(new FileReader(distFileName));
             while (StringUtils.isNotEmpty(data = reader.readLine())) {
